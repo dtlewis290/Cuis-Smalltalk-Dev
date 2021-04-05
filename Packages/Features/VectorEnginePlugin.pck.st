@@ -1,8 +1,8 @@
-'From Cuis 5.0 [latest update: #4546] on 26 March 2021 at 12:10:52 pm'!
+'From Cuis 5.0 [latest update: #4549] on 5 April 2021 at 12:39:03 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 6!
-!requires: 'VectorGraphics' 1 200 nil!
+!provides: 'VectorEnginePlugin' 1 7!
 !requires: 'VMMaker' 1 7 nil!
+!requires: 'VectorGraphics' 1 200 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
 
 
@@ -22,22 +22,22 @@ VectorEnginePlugin class
 Slang implementation of VectorEngineSubPixel. Based on https://www.researchgate.net/publication/267152327_Prefiltering_Antialiasing_for_General_Vector_Graphics
 VectorEnginePlugin translateInDirectory: DirectoryEntry currentDirectory doInlining: true!
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:35:21'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 10:54'!
 antiAliasingWidth: aFloat subPixelDelta: otherFloat
 	self
 		primitive: 'primAntiAliasingWidthsubPixelDelta'
 		parameters: #(Float Float).
-
+	self debugHook: 'antiAliasingWidth: aFloat subPixelDelta: otherFloat'.
 	antiAliasingWidth _ aFloat.
 	auxAntiAliasingWidthScaledInverse _ 127.0 / aFloat.
 	subPixelDelta _ otherFloat.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:16'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 10:58'!
 clipCurrentMorph: aBoolean morphIds: aWordArray
 	self
 		primitive: 'primClipCurrentMorph'
 		parameters: #(Boolean WordArray).
-
+	self debugHook: 'clipCurrentMorph: aBoolean morphIds: aWordArray'.
 	morphIds _ aWordArray.
 	(clipCurrentMorph and: [ aBoolean not ]) ifTrue: [
 		| pixelIndex |
@@ -48,109 +48,109 @@ clipCurrentMorph: aBoolean morphIds: aWordArray
 				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) >>8 << 8) ]]].
 	clipCurrentMorph _ aBoolean! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:23'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 10:59'!
 clipLeft: l clipTop: t clipRight: r clipBottom: b
 	self
 		primitive: 'primClipLeftclipTopclipRightclipBottom'
 		parameters: #(SmallInteger SmallInteger SmallInteger SmallInteger).
-
+	self debugHook: 'clipLeft: l clipTop: t clipRight: r clipBottom: b'.
 	clipLeft _ l.
 	clipTop _ t.
 	clipRight _ r.
 	clipBottom _ b! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:29'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 10:59'!
 currentMorphId: aNumber currentClipsSubmorphs: aBoolean
 "Bound it someway to 31 or 32 bits (SmallInteger in 32 bits, or uint in 32 bits, etc...)"
 	self
 		primitive: 'primCurrentMorphIdcurrentClipsSubmorphs'
 		parameters: #(SmallInteger Boolean).
-
+	self debugHook: 'currentMorphId: aNumber currentClipsSubmorphs: aBoolean'.
 	currentMorphId _ aNumber.
 	currentMorphId = 0 ifTrue: [ clipCurrentMorph _ false ].												"Essentially for initialization"
 	currentClipsSubmorphs _ aBoolean.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:34'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:01'!
 fillR: r g: g b: b a: a
 	self
 		primitive: 'primFillRGBA'
 		parameters: #(Float Float Float Float).
-
+	self debugHook: 'fillR: r g: g b: b a: a'.
 	fillR _ r.
 	fillG _ g.
 	fillB _ b.
 	fillA _ a.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/9/2021 15:10:08'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:01'!
 initializePath
 	self
 		primitive: 'primInitializePath'
 		parameters: #().
-
+	self debugHook: 'nitializePath'.
 	spanLeft _ targetWidth.						"drawable right. Will later be refined."
 	spanTop _ targetHeight.						"drawable bottom. Will later be refined."
 	spanRight _ 0.						"drawable left. Will later be refined."
 	spanBottom _ 0.						"drawable top. Will later be refined."! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/5/2021 16:27:16'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:02'!
 newTrajectoryFragment
 	self
 		primitive: 'primNewTrajectoryFragment'
 		parameters: #().
-
+	self debugHook: 'newTrajectoryFragment'.
 	prevYTruncated _ 16r7FFFFFFF.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/10/2021 10:53:54'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:02'!
 spanBottom
 	self
 		primitive: 'primSpanBottom'
 		parameters: #().
-
+	self debugHook: 'spanBottom'.
 	^(spanBottom + auxStrokeWidthDilatedHalf) asInteger asOop: SmallInteger.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/10/2021 10:53:58'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:02'!
 spanLeft
 	self
 		primitive: 'primSpanLeft'
 		parameters: #().
-
+	self debugHook: 'spanLeft'.
 	^(spanLeft - auxStrokeWidthDilatedHalf - subPixelDelta) asInteger +1 asOop: SmallInteger! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/10/2021 10:54:03'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:02'!
 spanRight
 	self
 		primitive: 'primSpanRight'
 		parameters: #().
-
+	self debugHook: 'spanRight'.
 	^(spanRight + auxStrokeWidthDilatedHalf + subPixelDelta) asInteger +1 asOop: SmallInteger. "Make room not just for updated mask, but also edges (hence, +1)"! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/10/2021 10:54:06'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:03'!
 spanTop
 	self
 		primitive: 'primSpanTop'
 		parameters: #().
-
+	self debugHook: 'spanTop'.
 	^(spanTop - auxStrokeWidthDilatedHalf) asInteger +1 asOop: SmallInteger! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:50'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:03'!
 strokeR: r g: g b: b a: a
 	self
 		primitive: 'primStrokeRGBA'
 		parameters: #(Float Float Float Float).
-
+	self debugHook: 'strokeR: r g: g b: b a: a'.
 	strokeR _ r.
 	strokeG _ g.
 	strokeB _ b.
 	strokeA _ a.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/19/2021 11:21:04'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:03'!
 strokeWidth: aNumber
 	| swErodedHalf |
 	self
 		primitive: 'primStrokeWidth'
 		parameters: #(Float).
 	self var: #swErodedHalf type: 'float'.
-
+	self debugHook: 'strokeWidth: aNumber'.
 	strokeWidth _ aNumber.
 	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
 	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
@@ -158,14 +158,13 @@ strokeWidth: aNumber
 	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf.
 	swErodedHalf < 0.0 ifTrue: [ auxStrokeWidthErodedHalfSquared _ 0.0 - auxStrokeWidthErodedHalfSquared ]! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:01:15'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:04'!
 targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray targetWidth: aNumber targetHeight: otherNumber
 	"All arrays could be pinned instead of passing them every time!!"
-
 	self
 		primitive: 'primSetTarget'
 		parameters: #(WordArray WordArray WordArray WordArray SmallInteger SmallInteger).
-
+	self debugHook: 'targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray targetWidth: aNumber targetHeight: otherNumber'.
 	targetBits _ aBitmap.
 	morphIds _ aWordArray.
 	edgeCounts _ otherWordArray.
@@ -173,12 +172,12 @@ targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: a
 	targetWidth _ aNumber.
 	targetHeight _ otherNumber.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/19/2021 11:45:50'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 4/5/2021 11:04'!
 textTxA11: a11 txA12: a12 txA13: a13 txA21: a21 txA22: a22 txA23: a23
 	self
 		primitive: 'primTextTxSet'
 		parameters: #(Float Float Float Float Float Float).
-
+	self debugHook: 'textTxA11: a11 txA12: a12 txA13: a13 txA21: a21 txA22: a22 txA23: a23'.
 	textTxA11 _ a11.
 	textTxA12 _ a12.
 	textTxA13 _ a13.
@@ -186,19 +185,18 @@ textTxA11: a11 txA12: a12 txA13: a13 txA21: a21 txA22: a22 txA23: a23
 	textTxA22 _ a22.
 	textTxA23 _ a23.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 3/19/2021 11:18:52'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'dtl 4/5/2021 10:57'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d edgeCounts: otherWordArray alphaMask: anotherWordArray
-
 	| angle xp yp x y |
 	self
 		primitive: 'primArc'
 		parameters: #(Float Float Float Float Float Float Float SmallInteger Float WordArray WordArray).
+	self debugHook: 'arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d edgeCounts: otherWordArray alphaMask: anotherWordArray'.
 	self var: #angle type: 'float'.
 	self var: #xp type: 'float'.
 	self var: #yp type: 'float'.
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
-
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
 	angle _ startAngle.
@@ -216,13 +214,13 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos
 			self updateEdgeCountAtX: x y: y ].
 		angle _ angle + d. ].! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 3/19/2021 11:20:19'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'dtl 4/5/2021 10:59'!
 cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 hops: hops edgeCounts: otherWordArray alphaMask: anotherWordArray
-
 	| xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f23 f2 f3 f4 x y |
 	self
 		primitive: 'primCubicBezier'
 		parameters: #(Float Float Float Float Float Float Float Float SmallInteger WordArray WordArray).
+	self debugHook: 'cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 hops: hops edgeCounts: otherWordArray alphaMask: anotherWordArray'.
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -237,10 +235,8 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 	self var: #xMaxEnd type: 'float'.
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
-
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
-
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 	xMinEnd _ xFrom min: xTo.
 	xMaxEnd _ xFrom max: xTo.
@@ -250,7 +246,6 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 	spanRight _ spanRight max: (xMaxEnd max: xMaxEnd*0.25 + ((xControl1 max: xControl2)*0.75)).
 	spanTop _ spanTop min: (yMinEnd min: yMinEnd*0.25 + ((yControl1 min: yControl2)*0.75)).
 	spanBottom _ spanBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((yControl1 max: yControl2)*0.75)).
-
 	t _ 0.0.
 	increment _ 1.0 / hops.
 	1 to: hops do: [ :h |
@@ -270,24 +265,21 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: xTo y: yTo ].! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 3/19/2021 11:20:34'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'dtl 4/5/2021 11:01'!
 lineFromX: xFrom y: yFrom toX: xTo y: yTo hops: hops incrementX: incrementX incrementY: incrementY edgeCounts: otherWordArray alphaMask: anotherWordArray
-
 	| x y |
 	self
 		primitive: 'primLine'
 		parameters: #(Float Float Float Float SmallInteger Float Float WordArray WordArray).
+	self debugHook: 'lineFromX: xFrom y: yFrom toX: xTo y: yTo hops: hops incrementX: incrementX incrementY: incrementY edgeCounts: otherWordArray alphaMask: anotherWordArray'.
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
-
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
-
 	spanLeft _ spanLeft min: (xFrom min: xTo).
 	spanRight _ spanRight max: (xFrom max: xTo).
 	spanTop _ spanTop min: (yFrom min: yTo).
 	spanBottom _ spanBottom max: (yFrom max: yTo).
-
 	x _ xFrom.
 	y _ yFrom.
 	1 to: hops do: [ :h |
@@ -300,13 +292,13 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo hops: hops incrementX: incrementX incr
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: xTo y: yTo ].! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 3/19/2021 11:20:56'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'dtl 4/5/2021 11:02'!
 quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl hops: hops edgeCounts: otherWordArray alphaMask: anotherWordArray
-
 	| xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primQuadraticBezier'
 		parameters: #(Float Float Float Float Float Float SmallInteger WordArray WordArray).
+	self debugHook: 'quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl hops: hops edgeCounts: otherWordArray alphaMask: anotherWordArray'.
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -319,10 +311,8 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	self var: #xMaxEnd type: 'float'.
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
-
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
-
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 	xMinEnd _ xFrom min: xTo.
 	xMaxEnd _ xFrom max: xTo.
@@ -332,7 +322,6 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+xControl) / 2.0).
 	spanTop _ spanTop min: (yMinEnd min: (yMinEnd+yControl) / 2.0).
 	spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+yControl) / 2.0).
-
 	t _ 0.0.
 	increment _ 1.0 / hops.
 	1 to: hops do: [ :h |
@@ -352,7 +341,6 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 3/19/2021 11:21:24'!
 updateAlphasForX: x y: y
-
 	"slight optimization possible when we know width = 0... perhaps implement:
 		-we know palpha is never 127
 		- we know distanceToEdge is always > erodedHalfWidth.
@@ -369,7 +357,6 @@ updateAlphasForX: x y: y
 	self var: #dx type: 'float'.
 	self var: #dxSquared type: 'float'.
 	self var: #dxp type: 'float'.
-
 	"Compute affected rect. Honor clipRect"
 	t _ (y -auxStrokeWidthDilatedHalf) asInteger +1.
 	t < clipTop ifTrue: [ t _ clipTop ].
@@ -379,7 +366,6 @@ updateAlphasForX: x y: y
 	l < clipLeft ifTrue: [ l _ clipLeft ].
 	r _ (x +auxStrokeWidthDilatedHalf +subPixelDelta) asInteger.
 	r > clipRight ifTrue: [ r _ clipRight ].
-
 	t to: b do: [ :displayY |
 		pixelIndex _ displayY * targetWidth +  l -1.
 		l to: r do: [ :displayX |
@@ -443,12 +429,9 @@ updateAlphasForX: x y: y
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 3/19/2021 11:21:38'!
 updateEdgeCountAtX: x y: y
 	"Compute edges intersecting with this horizontal line, for fills."
-
 	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex redIncrement greenIncrement blueIncrement countWord redCount greenCount blueCount rest redOffset greenOffset blueOffset |
-
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
-
 	thisYTruncated _ y asInteger.	"truncated, both in C and Smalltalk"
 	thisYTruncated = prevYTruncated ifTrue: [
 		^ 0].
@@ -457,7 +440,6 @@ updateEdgeCountAtX: x y: y
 	prevYTruncated = 16r7FFFFFFF ifTrue: [ 
 		prevYTruncated _ thisYTruncated.
 		^ 0 ].
-
 	thisYTruncated > prevYTruncated
 		ifTrue: [
 			pixelY _ thisYTruncated.
@@ -470,7 +452,6 @@ updateEdgeCountAtX: x y: y
 			greenIncrement _ 16rFF00.
 			blueIncrement _ 16rFF ].
 	prevYTruncated _ thisYTruncated.
-
 	"All edge count at the left of the clipRect are added there (at the left of the clipRect).
 	The effect is the same, and we need to clean up less stuff afterwards.
 	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
@@ -481,7 +462,6 @@ updateEdgeCountAtX: x y: y
 	redPixelIndex _ pixelIndexBase + redOffset.
 	greenPixelIndex _ pixelIndexBase + greenOffset.
 	bluePixelIndex _ pixelIndexBase + blueOffset.
-
 	"Three possible cases here: RGB in one word (pixel); RG in one, and G in another; R in one, GB in another"
 	redPixelIndex = bluePixelIndex
 		ifTrue: [						"First case: RGB in the same word"
@@ -503,7 +483,6 @@ updateEdgeCountAtX: x y: y
 						rest _ countWord  bitAnd: 16rFF.
 						countWord _ (redCount bitOr: greenCount) bitOr: rest.
 						edgeCounts at: redPixelIndex put: countWord ].
-
 					blueOffset <= clipRight ifTrue: [
 						countWord _ edgeCounts at: bluePixelIndex.
 						rest _ countWord bitAnd: 16rFFFF00.
@@ -518,7 +497,6 @@ updateEdgeCountAtX: x y: y
 						rest _ countWord bitAnd: 16rFFFF.
 						countWord _ redCount bitOr: rest.
 						edgeCounts at: redPixelIndex put: countWord ].
-
 					blueOffset <= clipRight ifTrue: [
 						countWord _ edgeCounts at: bluePixelIndex.
 						rest _ countWord bitAnd: 16rFF0000.
@@ -529,13 +507,13 @@ updateEdgeCountAtX: x y: y
 				]
 		].! !
 
-!VectorEnginePlugin methodsFor: 'text' stamp: 'jmv 3/26/2021 11:27:42'!
+!VectorEnginePlugin methodsFor: 'text' stamp: 'dtl 4/5/2021 10:59'!
 displayString: aString from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
-
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy hops iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primDisplayString'
 		parameters: #(String SmallInteger SmallInteger Float Float FloatArray IntegerArray Boolean SmallInteger WordArray WordArray).
+	self debugHook: 'displayString: aString from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray'.
 	self var: #answer type: 'double'.
 	self var: #nextGlyphX type: 'float'.
 	self var: #nextGlyphY type: 'float'.
@@ -557,7 +535,6 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY contou
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
 	self var: #iso8859s15 type: 'uint8_t'.
-
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -570,10 +547,8 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY contou
 	self var: #xMaxEnd type: 'float'.
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
-
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
-
 	nextGlyphX _ destX.
 	nextGlyphY _ destY.
 	startIndex-1 to: stopIndex-1 do: [ :charIndex |
@@ -651,13 +626,13 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY contou
 	answer _ nextGlyphX.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text' stamp: 'jmv 3/26/2021 11:27:27'!
+!VectorEnginePlugin methodsFor: 'text' stamp: 'dtl 4/5/2021 11:00'!
 displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
-
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy hops utf32 utf8Byte1 uft8Byte2 utf8Byte3 utf8Byte4 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primDisplayUtf32'
 		parameters: #(WordArray SmallInteger SmallInteger Float Float FloatArray IntegerArray Boolean SmallInteger WordArray WordArray).
+	self debugHook: 'displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray'.
 	self var: #answer type: 'double'.
 	self var: #nextGlyphX type: 'float'.
 	self var: #nextGlyphY type: 'float'.
@@ -678,7 +653,6 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY cont
 	self var: #controlY type: 'float'.
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
-
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -691,10 +665,8 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY cont
 	self var: #xMaxEnd type: 'float'.
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
-
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
-
 	nextGlyphX _ destX.
 	nextGlyphY _ destY.
 	startIndex-1 to: stopIndex-1 do: [ :utf32Index |
@@ -799,13 +771,13 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY cont
 	answer _ nextGlyphX.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text' stamp: 'jmv 3/26/2021 11:27:12'!
+!VectorEnginePlugin methodsFor: 'text' stamp: 'dtl 4/5/2021 11:00'!
 displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
-
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy hops baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primDisplayUtf8'
 		parameters: #(ByteArray SmallInteger SmallInteger Float Float FloatArray IntegerArray Boolean SmallInteger WordArray WordArray).
+	self debugHook: 'displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray'.
 	self var: #answer type: 'double'.
 	self var: #nextGlyphX type: 'float'.
 	self var: #nextGlyphY type: 'float'.
@@ -827,7 +799,6 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
 	self var: #byte type: 'uint8_t'.
-
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -840,10 +811,8 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 	self var: #xMaxEnd type: 'float'.
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
-
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
-
 	nextGlyphX _ destX.
 	nextGlyphY _ destY.
 	baseIndex _ 0.
@@ -931,13 +900,10 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 
 !VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/19/2021 11:19:17'!
 blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
-
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Blends stroke over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
-
 	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha clippingAntiAlias |
-
 	self var: #resultR type: 'float'.
 	self var: #resultG type: 'float'.
 	self var: #resultB type: 'float'.
@@ -954,12 +920,10 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 	self var: #resultAlphaG type: 'float'.
 	self var: #resultAlphaB type: 'float'.
 	self var: #targetAlpha type: 'float'.
-
 	antiAliasAlphasWord _ alphaMask at: pixelIndex.
 	antiAliasAlphasWord = 16r00000000 ifTrue: [		"Not in the stroke"
 		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [ 		"Not inside"
 			^0]].	"Optimization: We are completely transparent at this point. Do nothing."
-
 	"In this method, antiAliasAlphas are not used to blend stroke, but fill. This means that in the inside of the shape, and away from the stroke, they must be 1.0 (not 0.0)."
 	antiAliasRedAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F0000.
 	antiAliasGreenAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F00.
@@ -973,7 +937,6 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 	alphaR _ antiAliasRedAlpha * fillA.
 	alphaG _ antiAliasGreenAlpha * fillA.
 	alphaB _ antiAliasBlueAlpha * fillA.
-
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
@@ -990,7 +953,6 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
 					clippingAntiAlias _ 0]].
-
 	alphaR + alphaG + alphaB = 0.0 ifFalse: [
 		targetWord _ targetBits at: pixelIndex.
 		resultAlphaBits _ targetWord bitAnd: 16rFF000000.
@@ -998,7 +960,6 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 		resultGBits _ targetWord bitAnd: 16rFF00.
 		resultBBits _ targetWord bitAnd: 16rFF.
 		targetAlpha _ resultAlphaBits * ( 1.0 / (255.0 * 256 * 256 * 256)).
-
 		"These if are not really needed. just ignore them if we use simd instructions."
 		alphaR = 0.0 ifFalse: [
 			unAlphaR _ 1.0 - alphaR.
@@ -1006,7 +967,6 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 			resultR _ alphaR * fillR * 255.0 + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
 			resultR _ resultR/resultAlphaR.
 			resultRBits _ (resultR+0.5) asInteger bitShift: 16 ].
-
 		alphaG = 0.0 ifFalse: [
 			unAlphaG _ 1.0 - alphaG.
 			resultAlphaG _ alphaG + (unAlphaG * targetAlpha).
@@ -1014,27 +974,24 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 			resultG _ resultG/resultAlphaG.
 			resultGBits _ (resultG+0.5) asInteger bitShift: 8.
 			resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ].
-
 		alphaB = 0.0 ifFalse: [
 			unAlphaB _ 1.0 - alphaB.
 			resultAlphaB _ alphaB + (unAlphaB * targetAlpha).
 			resultB _ alphaB * fillB * 255.0 + (unAlphaB * resultBBits * targetAlpha).
 			resultB _ resultB/resultAlphaB.
 			resultBBits _ (resultB+0.5) asInteger ].
-
 		targetBits at: pixelIndex put: (((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits).
-
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].
 ! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/11/2021 14:08:47'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'dtl 4/5/2021 10:57'!
 blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray
 	| pixelIndex edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixelWord edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside |
 	self
 		primitive: 'primBlendFillOnly'
 		parameters: #(SmallInteger SmallInteger SmallInteger SmallInteger WordArray WordArray WordArray WordArray).
-
+	self debugHook: 'blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray'.
 	targetBits _ aBitmap.
 	morphIds _ aWordArray.
 	edgeCounts _ otherWordArray.
@@ -1046,38 +1003,30 @@ blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWo
 		pixelIndex _ displayY * targetWidth +  l - 1.
 		l to: r do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
-
 			edgesThisPixelWord _ edgeCounts at: pixelIndex.
 			edgeCounts at: pixelIndex put: 0.
 			edgesThisPixelR _ (edgesThisPixelWord bitAnd: 16rFF0000) bitShift: -16.
 			edgesThisPixelG _ (edgesThisPixelWord bitAnd: 16rFF00)bitShift: -8.
 			edgesThisPixelB _ edgesThisPixelWord bitAnd: 16rFF.
-
 			"Not needed in C or OpenCL, use signed char, i.e. a type where 16rFF means -1 and not 255"
 			edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR _ edgesThisPixelR - 256 ].
 			edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG _ edgesThisPixelG - 256 ].
 			edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB _ edgesThisPixelB - 256 ].
-
 			edgesUpToThisPixelR _ edgesUpToThisPixelR + edgesThisPixelR.
 			edgesUpToThisPixelG _ edgesUpToThisPixelG + edgesThisPixelG.
 			edgesUpToThisPixelB _ edgesUpToThisPixelB + edgesThisPixelB.
 			isRedInside _ edgesUpToThisPixelR ~= 0.
 			isGreenInside _ edgesUpToThisPixelG ~= 0.
 			isBlueInside _ edgesUpToThisPixelB ~= 0.
-
 			self blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside.
-
 			alphaMask at: pixelIndex put: 0 ]].! !
 
 !VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/19/2021 11:19:37'!
 blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
-
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
-
 	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha foreR foreG foreB alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha clippingAntiAlias |
-
 	self var: #resultR type: 'float'.
 	self var: #resultG type: 'float'.
 	self var: #resultB type: 'float'.
@@ -1097,19 +1046,16 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 	self var: #resultAlphaG type: 'float'.
 	self var: #resultAlphaB type: 'float'.
 	self var: #targetAlpha type: 'float'.
-
 	antiAliasAlphasWord _ alphaMask at: pixelIndex.
 	antiAliasAlphasWord = 16r00000000 ifTrue: [			"Not in the stroke"
 		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [ 		"Not inside"
 			^0]].	"Optimization: We are completely transparent at this point. Do nothing."
-
 	antiAliasRedAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F0000.
 	antiAliasGreenAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F00.
 	antiAliasBlueAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F.
 	antiAliasRedAlpha _ antiAliasRedAlphaBits * (1.0 / (127.0 * 256 * 256)).
 	antiAliasGreenAlpha _ antiAliasGreenAlphaBits * (1.0 / (127.0 * 256)).
 	antiAliasBlueAlpha _ antiAliasBlueAlphaBits * (1.0 / 127.0).
-
 	isRedInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
 			alphaR _ antiAliasRedAlpha * strokeA + ((1-antiAliasRedAlpha) * fillA).
@@ -1117,7 +1063,6 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 		ifFalse: [							"Blend stroke over background"
 			alphaR _ antiAliasRedAlpha * strokeA.
 			foreR _ strokeR * 255.0 ].
-
 	isGreenInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
 			alphaG _ antiAliasGreenAlpha * strokeA + ((1-antiAliasGreenAlpha) * fillA).
@@ -1125,7 +1070,6 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 		ifFalse: [							"Blend stroke over background"
 			alphaG _ antiAliasGreenAlpha * strokeA.
 			foreG _ strokeG * 255.0 ].
-
 	isBlueInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
 			alphaB _ antiAliasBlueAlpha * strokeA + ((1-antiAliasBlueAlpha) * fillA).
@@ -1133,7 +1077,6 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 		ifFalse: [							"Blend stroke over background"
 			alphaB _ antiAliasBlueAlpha * strokeA.
 			foreB _ strokeB * 255.0 ].
-
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
@@ -1153,7 +1096,6 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
 					clippingAntiAlias _ 0]].
-
 	alphaR + alphaG + alphaB = 0.0 ifFalse: [
 		targetWord _ targetBits at: pixelIndex.
 		resultAlphaBits _ targetWord bitAnd: 16rFF000000.
@@ -1161,7 +1103,6 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 		resultGBits _ targetWord bitAnd: 16rFF00.
 		resultBBits _ targetWord bitAnd: 16rFF.
 		targetAlpha _ resultAlphaBits * ( 1.0 / (255.0 * 256 * 256 * 256)).
-
 		"These if are not really needed. just ignore them if we use simd instructions."
 		alphaR = 0.0 ifFalse: [
 			unAlphaR _ 1.0 - alphaR.
@@ -1169,7 +1110,6 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 			resultR _ alphaR * foreR + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
 			resultR _ resultR/resultAlphaR.
 			resultRBits _ (resultR+0.5) asInteger bitShift: 16 ].
-
 		alphaG = 0.0 ifFalse: [
 			unAlphaG _ 1.0 - alphaG.
 			resultAlphaG _ alphaG + (unAlphaG * targetAlpha).
@@ -1177,27 +1117,24 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 			resultG _ resultG/resultAlphaG.
 			resultGBits _ (resultG+0.5) asInteger bitShift: 8.
 			resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ].
-
 		alphaB = 0.0 ifFalse: [
 			unAlphaB _ 1.0 - alphaB.
 			resultAlphaB _ alphaB + (unAlphaB * targetAlpha).
 			resultB _ alphaB * foreB + (unAlphaB * resultBBits * targetAlpha).
 			resultB _ resultB/resultAlphaB.
 			resultBBits _ (resultB+0.5) asInteger ].
-
 		targetBits at: pixelIndex put: (((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits).
-
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].
 ! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/11/2021 14:09:00'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'dtl 4/5/2021 10:58'!
 blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray
 	| pixelIndex edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixelWord edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside |
 	self
 		primitive: 'primBlendStrokeAndFill'
 		parameters: #(SmallInteger SmallInteger SmallInteger SmallInteger WordArray WordArray WordArray WordArray).
-
+	self debugHook: 'blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray'.
 	targetBits _ aBitmap.
 	morphIds _ aWordArray.
 	edgeCounts _ otherWordArray.
@@ -1209,38 +1146,30 @@ blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds
 		pixelIndex _ displayY * targetWidth +  l - 1.
 		l to: r do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
-
 			edgesThisPixelWord _ edgeCounts at: pixelIndex.
 			edgeCounts at: pixelIndex put: 0.
 			edgesThisPixelR _ (edgesThisPixelWord bitAnd: 16rFF0000) bitShift: -16.
 			edgesThisPixelG _ (edgesThisPixelWord bitAnd: 16rFF00)bitShift: -8.
 			edgesThisPixelB _ edgesThisPixelWord bitAnd: 16rFF.
-
 			"Not needed in C or OpenCL, use signed char, i.e. a type where 16rFF means -1 and not 255"
 			edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR _ edgesThisPixelR - 256 ].
 			edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG _ edgesThisPixelG - 256 ].
 			edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB _ edgesThisPixelB - 256 ].
-
 			edgesUpToThisPixelR _ edgesUpToThisPixelR + edgesThisPixelR.
 			edgesUpToThisPixelG _ edgesUpToThisPixelG + edgesThisPixelG.
 			edgesUpToThisPixelB _ edgesUpToThisPixelB + edgesThisPixelB.
 			isRedInside _ edgesUpToThisPixelR ~= 0.
 			isGreenInside _ edgesUpToThisPixelG ~= 0.
 			isBlueInside _ edgesUpToThisPixelB ~= 0.
-
 			self blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside.
-
 			alphaMask at: pixelIndex put: 0 ]].! !
 
 !VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/19/2021 11:19:53'!
 blendStrokeOnlyAt: pixelIndex
-
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Blends stroke over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
-
 	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha clippingAntiAlias |
-
 	self var: #resultR type: 'float'.
 	self var: #resultG type: 'float'.
 	self var: #resultB type: 'float'.
@@ -1257,11 +1186,9 @@ blendStrokeOnlyAt: pixelIndex
 	self var: #resultAlphaG type: 'float'.
 	self var: #resultAlphaB type: 'float'.
 	self var: #targetAlpha type: 'float'.
-
 	antiAliasAlphasWord _ alphaMask at: pixelIndex.
 	antiAliasAlphasWord = 16r00000000 ifTrue: [
 		^0].	"Optimization: We are completely transparent at this point. Do nothing."
-
 	antiAliasRedAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F0000.
 	antiAliasGreenAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F00.
 	antiAliasBlueAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F.
@@ -1271,7 +1198,6 @@ blendStrokeOnlyAt: pixelIndex
 	alphaR _ antiAliasRedAlpha * strokeA.
 	alphaG _ antiAliasGreenAlpha * strokeA.
 	alphaB _ antiAliasBlueAlpha * strokeA.
-
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
@@ -1288,7 +1214,6 @@ blendStrokeOnlyAt: pixelIndex
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
 					clippingAntiAlias _ 0]].
-
 	alphaR + alphaG + alphaB = 0.0 ifFalse: [
 		targetWord _ targetBits at: pixelIndex.
 		resultAlphaBits _ targetWord bitAnd: 16rFF000000.
@@ -1296,7 +1221,6 @@ blendStrokeOnlyAt: pixelIndex
 		resultGBits _ targetWord bitAnd: 16rFF00.
 		resultBBits _ targetWord bitAnd: 16rFF.
 		targetAlpha _ resultAlphaBits * ( 1.0 / (255.0 * 256 * 256 * 256)).
-
 		"These if are not really needed. just ignore them if we use simd instructions."
 		alphaR = 0.0 ifFalse: [
 			unAlphaR _ 1.0 - alphaR.
@@ -1304,7 +1228,6 @@ blendStrokeOnlyAt: pixelIndex
 			resultR _ alphaR * strokeR * 255.0 + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
 			resultR _ resultR/resultAlphaR.
 			resultRBits _ (resultR+0.5) asInteger bitShift: 16 ].
-
 		alphaG = 0.0 ifFalse: [
 			unAlphaG _ 1.0 - alphaG.
 			resultAlphaG _ alphaG + (unAlphaG * targetAlpha).
@@ -1312,26 +1235,23 @@ blendStrokeOnlyAt: pixelIndex
 			resultG _ resultG/resultAlphaG.
 			resultGBits _ (resultG+0.5) asInteger bitShift: 8.
 			resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ].
-
 		alphaB = 0.0 ifFalse: [
 			unAlphaB _ 1.0 - alphaB.
 			resultAlphaB _ alphaB + (unAlphaB * targetAlpha).
 			resultB _ alphaB * strokeB * 255.0 + (unAlphaB * resultBBits * targetAlpha).
 			resultB _ resultB/resultAlphaB.
 			resultBBits _ (resultB+0.5) asInteger ].
-
 		targetBits at: pixelIndex put: (((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits).
-
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/11/2021 11:42:35'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'dtl 4/5/2021 10:58'!
 blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray alphaMask: anotherWordArray
 	| pixelIndex |
 	self
 		primitive: 'primBlendStrokeOnly'
 		parameters: #(SmallInteger SmallInteger SmallInteger SmallInteger WordArray WordArray WordArray).
-
+	self debugHook: 'blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray alphaMask: anotherWordArray'.
 	targetBits _ aBitmap.
 	morphIds _ aWordArray.
 	alphaMask _ anotherWordArray.
@@ -1339,15 +1259,32 @@ blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: a
 		pixelIndex _ displayY * targetWidth +  l - 1.
 		l to: r do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
-
 			self blendStrokeOnlyAt: pixelIndex.
-
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEnginePlugin class methodsFor: 'translation' stamp: 'jmv 3/19/2021 14:00:35'!
+!VectorEnginePlugin methodsFor: 'debugging' stamp: 'dtl 4/5/2021 11:08'!
+debugHook
+	"A handy place to put a gdb breakpoint to catch primitive calls."
+	<inline: false>
+! !
+
+!VectorEnginePlugin methodsFor: 'debugging' stamp: 'dtl 4/5/2021 11:54'!
+debugHook: aString
+	<inline: false>
+	<var: #aString type: 'char *'>
+	<var: #tv declareC: 'struct timeval tv'>
+	<var: #seconds type: 'time_t'>
+	<var: #microseconds type: 'suseconds_t'>
+	| tv seconds microseconds |
+	self cCode: 'gettimeofday(&tv, NULL)'.
+	seconds _ self cCode: 'tv.tv_sec %1000'.
+	microseconds _ self cCode: 'tv.tv_usec'.
+	self cCode: 'printf("%ld.%ld VectorEnginePlugin %s\n", seconds, microseconds , aString)'.
+! !
+
+!VectorEnginePlugin class methodsFor: 'translation' stamp: 'dtl 4/5/2021 11:35'!
 declareCVarsIn: aCCodeGenerator
-
-
+	aCCodeGenerator addHeaderFile: '<sys/time.h>'.
 	aCCodeGenerator addHeaderFile: '<stdint.h>'.
 	aCCodeGenerator var: 'targetBits' type: 'uint32_t *'.
 	aCCodeGenerator var: 'morphIds' type: 'uint32_t *'.
