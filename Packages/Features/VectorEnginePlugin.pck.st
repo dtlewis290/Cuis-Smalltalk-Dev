@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4549] on 5 April 2021 at 8:08:13 pm'!
+'From Cuis 5.0 [latest update: #4549] on 5 April 2021 at 8:27:20 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 10!
+!provides: 'VectorEnginePlugin' 1 11!
 !requires: 'VMMaker' 1 7 nil!
 !requires: 'VectorGraphics' 1 200 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -557,7 +557,7 @@ debugHook: aString
 		ifTrue:[ self printConsole: aString ]
 ! !
 
-!VectorEnginePlugin methodsFor: 'debugging' stamp: 'dtl 4/5/2021 16:16'!
+!VectorEnginePlugin methodsFor: 'debugging' stamp: 'dtl 4/5/2021 20:18'!
 printConsole: aString
 	<inline: false>
 	<var: #aString type: 'char *'>
@@ -567,12 +567,11 @@ printConsole: aString
 	<var: #dummy type: 'char *'>
 
 	| tv seconds microseconds dummy |
-	self cppIf: #'CONSOLE_DEBUG' ifTrue:[
-		dummy _ CONSOLE_DEBUG. "hack to force inclusion of the #define in generated source"
-		self cCode: 'gettimeofday(&tv, NULL)'.
-		seconds _ self cCode: 'tv.tv_sec %1000'.
-		microseconds _ self cCode: 'tv.tv_usec'.
-		self cCode: 'printf("%ld.%ld %s\n", seconds, microseconds , aString)' ]
+	dummy _ CONSOLE_DEBUG. "hack to force inclusion of the #define in generated source"
+	self cCode: 'gettimeofday(&tv, NULL)'.
+	seconds _ self cCode: 'tv.tv_sec %1000'.
+	microseconds _ self cCode: 'tv.tv_usec'.
+	self cCode: 'printf("%ld.%ld %s\n", seconds, microseconds , aString)'
 ! !
 
 !VectorEnginePlugin methodsFor: 'text' stamp: 'dtl 4/5/2021 10:59'!
