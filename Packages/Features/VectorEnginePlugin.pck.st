@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4549] on 5 April 2021 at 7:12:01 pm'!
+'From Cuis 5.0 [latest update: #4549] on 5 April 2021 at 8:08:13 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 9!
+!provides: 'VectorEnginePlugin' 1 10!
 !requires: 'VMMaker' 1 7 nil!
 !requires: 'VectorGraphics' 1 200 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -547,6 +547,33 @@ updateEdgeCountAtX: x y: y
 						edgeCounts at: bluePixelIndex put: countWord ].
 				]
 		].! !
+
+!VectorEnginePlugin methodsFor: 'debugging' stamp: 'dtl 4/5/2021 14:16'!
+debugHook: aString
+	<inline: true>
+	<var: #aString type: 'char *'>
+
+	self cppIf: #'CONSOLE_DEBUG'
+		ifTrue:[ self printConsole: aString ]
+! !
+
+!VectorEnginePlugin methodsFor: 'debugging' stamp: 'dtl 4/5/2021 16:16'!
+printConsole: aString
+	<inline: false>
+	<var: #aString type: 'char *'>
+	<var: #tv declareC: 'struct timeval tv'>
+	<var: #seconds type: 'time_t'>
+	<var: #microseconds type: 'suseconds_t'>
+	<var: #dummy type: 'char *'>
+
+	| tv seconds microseconds dummy |
+	self cppIf: #'CONSOLE_DEBUG' ifTrue:[
+		dummy _ CONSOLE_DEBUG. "hack to force inclusion of the #define in generated source"
+		self cCode: 'gettimeofday(&tv, NULL)'.
+		seconds _ self cCode: 'tv.tv_sec %1000'.
+		microseconds _ self cCode: 'tv.tv_usec'.
+		self cCode: 'printf("%ld.%ld %s\n", seconds, microseconds , aString)' ]
+! !
 
 !VectorEnginePlugin methodsFor: 'text' stamp: 'dtl 4/5/2021 10:59'!
 displayString: aString from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
@@ -1369,38 +1396,10 @@ blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: a
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEnginePlugin methodsFor: 'debugging' stamp: 'dtl 4/5/2021 11:08'!
-debugHook
-	"A handy place to put a gdb breakpoint to catch primitive calls."
-	<inline: false>
-! !
-
-!VectorEnginePlugin methodsFor: 'debugging' stamp: 'dtl 4/5/2021 14:16'!
-debugHook: aString
-	<inline: true>
-	<var: #aString type: 'char *'>
-
-	self cppIf: #'CONSOLE_DEBUG'
-		ifTrue:[ self printConsole: aString ]
-! !
-
-!VectorEnginePlugin methodsFor: 'debugging' stamp: 'dtl 4/5/2021 16:16'!
-printConsole: aString
-	<inline: false>
-	<var: #aString type: 'char *'>
-	<var: #tv declareC: 'struct timeval tv'>
-	<var: #seconds type: 'time_t'>
-	<var: #microseconds type: 'suseconds_t'>
-	<var: #dummy type: 'char *'>
-
-	| tv seconds microseconds dummy |
-	self cppIf: #'CONSOLE_DEBUG' ifTrue:[
-		dummy _ CONSOLE_DEBUG. "hack to force inclusion of the #define in generated source"
-		self cCode: 'gettimeofday(&tv, NULL)'.
-		seconds _ self cCode: 'tv.tv_sec %1000'.
-		microseconds _ self cCode: 'tv.tv_usec'.
-		self cCode: 'printf("%ld.%ld %s\n", seconds, microseconds , aString)' ]
-! !
+!VectorEnginePlugin class methodsFor: 'class initialization' stamp: 'dtl 4/5/2021 17:16'!
+initialize
+	"Define as 1 for debugging output to the console, or 0 for normal use"
+	CONSOLE_DEBUG _ 0! !
 
 !VectorEnginePlugin class methodsFor: 'translation' stamp: 'dtl 4/5/2021 11:35'!
 declareCVarsIn: aCCodeGenerator
@@ -1414,9 +1413,4 @@ declareCVarsIn: aCCodeGenerator
 	aCCodeGenerator var: 'alphaMask' type: 'uint32_t *'.
 	#(antiAliasingWidth subPixelDelta strokeWidth strokeR strokeG strokeB strokeA fillR fillG fillB fillA textTxA11 textTxA12 textTxA13 textTxA21 textTxA22 textTxA23 auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared spanLeft spanTop spanRight spanBottom) do: [ :varName |
 		aCCodeGenerator var: varName type: 'float' ].! !
-
-!VectorEnginePlugin class methodsFor: 'class initialization' stamp: 'dtl 4/5/2021 17:16'!
-initialize
-	"Define as 1 for debugging output to the console, or 0 for normal use"
-	CONSOLE_DEBUG _ 0! !
 VectorEnginePlugin initialize!
